@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Minecraft Survival Tool — versione semplificata</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#0b2a12;
+    --panel:#1b4d1f;
+    --accent:#8bd14b;
+    --muted:#9fbf9a;
+    --danger:#a83a2a;
+    --card:#123819;
+    --glass: rgba(255,255,255,0.03);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: "Press Start 2P", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: linear-gradient(180deg,#06160a 0%, #0b2a12 60%);
+    color:var(--muted);
+    -webkit-font-smoothing:antialiased;
+    line-height: 1.6; /* ← più spazio tra righe */
+  }
+
+  p, li {
+    margin-bottom: 8px; /* ← spazio tra paragrafi e liste */
+  }
+
+  header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:18px;
+    background:linear-gradient(90deg, rgba(0,0,0,0.25), rgba(255,255,255,0.02));
+    border-bottom: 2px solid rgba(0,0,0,0.3);
+    position:sticky; top:0; z-index:10;
+  }
+  .logo{
+    width:48px; height:48px;
+    background: linear-gradient(180deg,#8bd14b,#6aa83a);
+    display:flex;align-items:center;justify-content:center;
+    border-radius:6px;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.6);
+    color:#072; font-size:22px;
+  }
+  nav{display:flex; gap:10px; flex-wrap:wrap;}
+  a.navlink{
+    padding:10px 12px;
+    border-radius:6px;
+    text-decoration:none;
+    color:var(--muted);
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.03);
+    font-size:11px;
+  }
+  a.navlink.active{
+    background:var(--panel);
+    color:var(--accent);
+    border-color: rgba(139,209,75,0.2);
+  }
+  main{padding:20px; max-width:1100px; margin:18px auto;}
+  .grid{display:grid; gap:16px;}
+  .two-col{grid-template-columns: 1fr 360px;}
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.05));
+    border-radius:10px;
+    padding:16px 18px;
+    border:1px solid rgba(255,255,255,0.03);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+  }
+  h1,h2{color:var(--accent); margin:0 0 12px 0; font-size:13px; line-height:1.8;}
+  label{display:block; font-size:10px; color:var(--muted); margin-bottom:6px; line-height:1.4;}
+  input[type="text"], input[type="number"], textarea, select{
+    width:100%; padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.02);
+    background:var(--glass); color:var(--muted); font-family:inherit; font-size:12px;
+    line-height:1.5;
+  }
+  button{
+    font-family:inherit; font-size:11px; padding:8px 10px; border-radius:6px; cursor:pointer;
+    border:1px solid rgba(0,0,0,0.4);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.05));
+    color:var(--muted);
+    line-height:1.4;
+  }
+  button.primary{background:linear-gradient(180deg,var(--accent),#6aa83a); color:#052; border:1px solid rgba(0,0,0,0.2);}
+  .list{display:flex;flex-direction:column; gap:10px;}
+  .item{
+    display:flex; justify-content:space-between; gap:10px; align-items:center;
+    padding:10px; border-radius:8px; background:var(--card); border:1px solid rgba(0,0,0,0.4);
+    line-height:1.5;
+  }
+  .item .left{display:flex; gap:8px; align-items:center}
+  .item .title{font-size:11px; color:var(--muted); line-height:1.6;}
+  .small{font-size:10px; color:rgba(255,255,255,0.6); line-height:1.6;}
+  .actions{display:flex; gap:6px}
+  .tag{padding:4px 8px; border-radius:6px; background:rgba(0,0,0,0.15); font-size:10px}
+  .done{opacity:0.5; text-decoration:line-through}
+  footer{padding:14px; text-align:center; font-size:11px; color:rgba(255,255,255,0.25); line-height:1.8;}
+  @media (max-width:900px){
+    .two-col{grid-template-columns: 1fr;}
+    .logo{width:40px;height:40px}
+    header{gap:8px}
+  }
+  .row{display:flex; gap:8px; align-items:center}
+  .spacer{flex:1}
+  .progress-bar{height:10px; background:rgba(0,0,0,0.15); border-radius:6px; overflow:hidden}
+  .progress-fill{height:100%; background:linear-gradient(90deg,var(--accent),#5fb038); width:0%}
+  .section-title{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+</style>
+</head>
+<header>
+  <div class="logo">MC</div>
+  <nav>
+    <a href="#coordinates" class="navlink" data-route="coordinates">🧭 Coordinate</a>
+    <a href="#todo" class="navlink" data-route="todo">✅ To-Do List</a>
+    <a href="#projects" class="navlink" data-route="projects">🏗️ Progetti Avviati</a>
+  </nav>
+  <div class="spacer"></div>
+  <div style="font-size:11px;color:var(--muted)">Tema Minecraft • Dati salvati localmente</div>
+</header>
+
+<main>
+  <!-- COORDINATE -->
+  <section id="page-coordinates" class="grid">
+    <div class="card">
+      <h1>🧭 Coordinate</h1>
+      <p class="small">Salva, copia e gestisci coordinate utili (es. base, miniera, villaggio).</p>
+
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <input id="coord-name" type="text" placeholder="Nome (es. Base)" />
+        <input id="coord-x" type="number" placeholder="X" />
+        <input id="coord-y" type="number" placeholder="Y" />
+        <input id="coord-z" type="number" placeholder="Z" />
+        <button id="add-coord" class="primary">Aggiungi</button>
+      </div>
+
+      <hr style="margin:12px 0; border:0; height:1px; background:rgba(255,255,255,0.03)">
+
+      <div id="coords-list" class="list"></div>
+    </div>
+
+    <div class="card">
+      <h2>Suggerimenti rapidi</h2>
+      <ul class="small">
+        <li>Usa nomi nitidi (es. "Base - Portale Nether").</li>
+        <li>Clicca la freccia per copiare le coordinate in clipboard.</li>
+        <li>I dati sono salvati localmente sul tuo browser (localStorage).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- TODO -->
+  <section id="page-todo" class="grid" style="display:none; gap:16px">
+    <div class="card">
+      <h1>✅ To-Do List</h1>
+      <p class="small">Categorie: 🪓 Raccolta Risorse | 🧱 Costruzioni | ⚔️ Avventure / Missioni | 🌿 Altro</p>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <input id="todo-text" type="text" placeholder="Cosa fare..." />
+        <select id="todo-section">
+          <option value="raccolta">🪓 Raccolta Risorse</option>
+          <option value="costruzioni">🧱 Costruzioni</option>
+          <option value="avventure">⚔️ Avventure / Missioni</option>
+          <option value="altro">🌿 Altro</option>
+        </select>
+        <button id="add-todo" class="primary">Aggiungi</button>
+      </div>
+
+      <hr style="margin:12px 0; border:0; height:1px; background:rgba(255,255,255,0.03)">
+
+      <div style="display:grid; gap:12px">
+        <div>
+          <div class="section-title"><strong>🪓 Raccolta Risorse</strong><div class="spacer"></div><button id="clear-raccolta">Svuota</button></div>
+          <div id="list-raccolta" class="list"></div>
+        </div>
+
+        <div>
+          <div class="section-title"><strong>🧱 Costruzioni</strong><div class="spacer"></div><button id="clear-costruzioni">Svuota</button></div>
+          <div id="list-costruzioni" class="list"></div>
+        </div>
+
+        <div>
+          <div class="section-title"><strong>⚔️ Avventure / Missioni</strong><div class="spacer"></div><button id="clear-avventure">Svuota</button></div>
+          <div id="list-avventure" class="list"></div>
+        </div>
+
+        <div>
+          <div class="section-title"><strong>🌿 Altro</strong><div class="spacer"></div><button id="clear-altro">Svuota</button></div>
+          <div id="list-altro" class="list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Tip</h2>
+      <p class="small">Segna le priorità mettendo '!' davanti al testo. Puoi spuntare gli elementi per segnarli come completati.</p>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="page-projects" class="grid" style="display:none; gap:16px">
+    <div class="card">
+      <h1>🏗️ Progetti Avviati</h1>
+      <p class="small">Registra i progetti in corso, descrizione, e progresso.</p>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <input id="proj-title" type="text" placeholder="Titolo progetto" />
+        <input id="proj-progress" type="number" min="0" max="100" placeholder="% completamento" />
+        <button id="add-proj" class="primary">Aggiungi progetto</button>
+      </div>
+
+      <label style="margin-top:8px">Descrizione</label>
+      <textarea id="proj-desc" rows="3" placeholder="Breve descrizione..."></textarea>
+
+      <hr style="margin:12px 0; border:0; height:1px; background:rgba(255,255,255,0.03)">
+
+      <div id="projects-list" class="list"></div>
+    </div>
+
+    <div class="card">
+      <h2>Progresso aggregato</h2>
+      <div style="margin-top:8px">
+        <div class="small">Media progresso progetti:</div>
+        <div style="margin-top:8px" class="progress-bar"><div id="avg-progress" class="progress-fill"></div></div>
+        <div id="avg-text" class="small" style="margin-top:6px"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>Salva locale • Creato velocemente per una survival su Minecraft</footer>
+
+<script>
+/* --- Storage helpers --- */
+const STORAGE_KEY = 'mc_survival_tool_v1';
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return defaultState();
+    return JSON.parse(raw);
+  }catch(e){ return defaultState(); }
+}
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+function defaultState(){
+  return {
+    coords: [],
+    todos: {raccolta:[], costruzioni:[], avventure:[], altro:[]},
+    projects: []
+  };
+}
+
+/* --- In-memory --- */
+let state = loadState();
+
+/* --- Routing (hash) --- */
+const pages = {
+  coordinates: document.getElementById('page-coordinates'),
+  todo: document.getElementById('page-todo'),
+  projects: document.getElementById('page-projects')
+};
+function setRoute(route){
+  Object.keys(pages).forEach(r => {
+    pages[r].style.display = (r===route?'grid':'none');
+  });
+  document.querySelectorAll('.navlink').forEach(a=>{
+    a.classList.toggle('active', a.dataset.route===route);
+  });
+}
+function initRoute(){
+  const hash = location.hash.replace('#','') || 'coordinates';
+  setRoute(hash);
+}
+window.addEventListener('hashchange', initRoute);
+initRoute();
+
+/* --- Coordinates --- */
+const coordsListEl = document.getElementById('coords-list');
+function renderCoords(){
+  coordsListEl.innerHTML = '';
+  state.coords.slice().reverse().forEach((c, idx) => {
+    const id = state.coords.length - 1 - idx;
+    const item = document.createElement('div'); item.className='item';
+    item.innerHTML = `
+      <div class="left">
+        <div>
+          <div class="title">${escapeHtml(c.name || 'Senza nome')}</div>
+          <div class="small">X:${c.x} Y:${c.y} Z:${c.z}</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button data-copy="${id}">📋</button>
+        <button data-edit="${id}">✏️</button>
+        <button data-del="${id}">🗑️</button>
+      </div>
+    `;
+    coordsListEl.appendChild(item);
+  });
+}
+document.getElementById('add-coord').addEventListener('click', ()=>{
+  const name = document.getElementById('coord-name').value.trim();
+  const x = document.getElementById('coord-x').value;
+  const y = document.getElementById('coord-y').value;
+  const z = document.getElementById('coord-z').value;
+  if(x==='' || y==='' || z===''){ alert('Inserisci X, Y e Z'); return; }
+  state.coords.push({name, x: Number(x), y: Number(y), z: Number(z)});
+  saveState(); renderCoords();
+  document.getElementById('coord-name').value=''; document.getElementById('coord-x').value=''; document.getElementById('coord-y').value=''; document.getElementById('coord-z').value='';
+});
+coordsListEl.addEventListener('click', (e)=>{
+  const idCopy = e.target.getAttribute('data-copy');
+  const idEdit = e.target.getAttribute('data-edit');
+  const idDel  = e.target.getAttribute('data-del');
+  if(idCopy!=null){
+    const c = state.coords[idCopy];
+    const txt = `${c.name || 'Coord'}: ${c.x}, ${c.y}, ${c.z}`;
+    navigator.clipboard?.writeText(txt).then(()=> alert('Coordinate copiate negli appunti: ' + txt)).catch(()=> alert('Copia non supportata'));
+    return;
+  }
+  if(idEdit!=null){
+    const c = state.coords[idEdit];
+    const newName = prompt('Nome', c.name) || c.name;
+    const newX = prompt('X', c.x);
+    const newY = prompt('Y', c.y);
+    const newZ = prompt('Z', c.z);
+    if(newX==null||newY==null||newZ==null) return;
+    state.coords[idEdit] = {name:newName, x:Number(newX), y:Number(newY), z:Number(newZ)};
+    saveState(); renderCoords();
+    return;
+  }
+  if(idDel!=null){
+    if(!confirm('Eliminare la coordinata?')) return;
+    state.coords.splice(idDel,1); saveState(); renderCoords();
+    return;
+  }
+});
+
+/* --- To-Do --- */
+function renderTodos(){
+  ['raccolta','costruzioni','avventure','altro'].forEach(section=>{
+    const listEl = document.getElementById('list-' + section);
+    listEl.innerHTML='';
+    state.todos[section].forEach((t,i)=>{
+      const item = document.createElement('div'); item.className='item';
+      item.innerHTML = `
+        <div class="left">
+          <div style="display:flex;flex-direction:column">
+            <div class="title ${t.done? 'done':''}">${escapeHtml(t.text)}</div>
+            <div class="small">${new Date(t.created).toLocaleString()}</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button data-toggle="${section}|${i}">${t.done? '↶' : '✔️'}</button>
+          <button data-edit="${section}|${i}">✏️</button>
+          <button data-del="${section}|${i}">🗑️</button>
+        </div>
+      `;
+      listEl.appendChild(item);
+    });
+  });
+}
+document.getElementById('add-todo').addEventListener('click', ()=>{
+  const text = document.getElementById('todo-text').value.trim();
+  const section = document.getElementById('todo-section').value;
+  if(!text){ alert('Scrivi qualcosa da fare'); return; }
+  state.todos[section].push({text, done:false, created: Date.now()});
+  saveState(); renderTodos();
+  document.getElementById('todo-text').value='';
+});
+['list-raccolta','list-costruzioni','list-avventure','list-altro'].forEach(id=>{
+  document.getElementById(id).addEventListener('click', (e)=>{
+    const edit = e.target.getAttribute('data-edit');
+    const del = e.target.getAttribute('data-del');
+    const toggle = e.target.getAttribute('data-toggle');
+    if(toggle){
+      const [section, idx] = toggle.split('|');
+      state.todos[section][idx].done = !state.todos[section][idx].done; saveState(); renderTodos(); return;
+    }
+    if(edit){
+      const [section, idx] = edit.split('|');
+      const item = state.todos[section][idx];
+      const newText = prompt('Modifica elemento', item.text);
+      if(newText!=null){ state.todos[section][idx].text = newText; saveState(); renderTodos(); }
+      return;
+    }
+    if(del){
+      const [section, idx] = del.split('|');
+      if(confirm('Eliminare elemento?')){ state.todos[section].splice(idx,1); saveState(); renderTodos(); }
+      return;
+    }
+  });
+});
+document.getElementById('clear-raccolta').addEventListener('click', ()=>{ if(confirm('Svuotare Raccolta Risorse?')){ state.todos.raccolta=[]; saveState(); renderTodos(); }});
+document.getElementById('clear-costruzioni').addEventListener('click', ()=>{ if(confirm('Svuotare Costruzioni?')){ state.todos.costruzioni=[]; saveState(); renderTodos(); }});
+document.getElementById('clear-avventure').addEventListener('click', ()=>{ if(confirm('Svuotare Avventure?')){ state.todos.avventure=[]; saveState(); renderTodos(); }});
+document.getElementById('clear-altro').addEventListener('click', ()=>{ if(confirm('Svuotare Altro?')){ state.todos.altro=[]; saveState(); renderTodos(); }});
+
+/* --- Projects --- */
+const projectsListEl = document.getElementById('projects-list');
+function renderProjects(){
+  projectsListEl.innerHTML='';
+  state.projects.forEach((p, i)=>{
+    const item = document.createElement('div'); item.className='item';
+    item.innerHTML = `
+      <div class="left" style="align-items:flex-start">
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="title">${escapeHtml(p.title)}</div>
+          <div class="tag small">${p.progress}%</div>
+        </div>
+        <div class="small" style="margin-top:6px">${escapeHtml(p.desc||'')}</div>
+      </div>
+      <div class="actions">
+        <button data-edit="${i}">✏️</button>
+        <button data-del="${i}">🗑️</button>
+      </div>
+    `;
+    projectsListEl.appendChild(item);
+  });
+  updateAvgProgress();
+}
+document.getElementById('add-proj').addEventListener('click', ()=>{
+  const title = document.getElementById('proj-title').value.trim();
+  let progress = Number(document.getElementById('proj-progress').value || 0);
+  const desc = document.getElementById('proj-desc').value.trim();
+  if(!title){ alert('Inserisci un titolo per il progetto'); return; }
+  if(progress<0) progress = 0; if(progress>100) progress=100;
+  state.projects.push({title, progress, desc, created: Date.now()});
+  saveState(); renderProjects();
+  document.getElementById('proj-title').value=''; document.getElementById('proj-progress').value=''; document.getElementById('proj-desc').value='';
+});
+projectsListEl.addEventListener('click', (e)=>{
+  const edit = e.target.getAttribute('data-edit');
+  const del = e.target.getAttribute('data-del');
+  if(edit!=null){
+    const i = Number(edit);
+    const p = state.projects[i];
+    const newTitle = prompt('Titolo', p.title);
+    const newProgress = prompt('Progress %', p.progress);
+    const newDesc = prompt('Descrizione', p.desc);
+    if(newTitle!=null) p.title = newTitle;
+    if(newProgress!=null) p.progress = Math.max(0, Math.min(100, Number(newProgress)));
+    if(newDesc!=null) p.desc = newDesc;
+    saveState(); renderProjects();
+    return;
+  }
+  if(del!=null){
+    const i = Number(del);
+    if(confirm('Eliminare progetto?')){ state.projects.splice(i,1); saveState(); renderProjects(); }
+    return;
+  }
+});
+function updateAvgProgress(){
+  const elFill = document.getElementById('avg-progress');
+  const elText = document.getElementById('avg-text');
+  if(state.projects.length===0){
+    elFill.style.width='0%'; elText.textContent='Nessun progetto';
+    return;
+  }
+  const avg = Math.round(state.projects.reduce((s,p)=>s+p.progress,0)/state.projects.length);
+  elFill.style.width = avg + '%';
+  elText.textContent = `Media: ${avg}% (${state.projects.length} progetti)`;
+}
+
+/* --- Utils & init render --- */
+function escapeHtml(text){
+  return String(text || '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+}
+
+function init(){
+  renderCoords();
+  renderTodos();
+  renderProjects();
+}
+init();
+
+/* --- Keep updating nav active on load --- */
+document.querySelectorAll('.navlink').forEach(a=>{
+  a.addEventListener('click', ()=> setRoute(a.dataset.route));
+});
+
+/* --- Accessibility: keyboard save quick keys (optional) --- */
+window.addEventListener('keydown', (e)=>{
+  if(e.ctrlKey && e.key.toLowerCase() === 's'){ e.preventDefault(); saveState(); alert('Dati salvati'); }
+});
+</script>
+</body>
+</html>
